@@ -18,7 +18,6 @@ function [J grad] = nnCostFunction(nn_params, ...
 % for our 2 layer neural network
 Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), ...
                  hidden_layer_size, (input_layer_size + 1));
-
 Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):end), ...
                  num_labels, (hidden_layer_size + 1));
 
@@ -62,30 +61,63 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+% Part 1
 
+% Initialize the (capital) Deltas
+Delta1 = 0;
+Delta2 = 0;
 
+for i = 1:m
+   % FORWARD PROP
 
+   % First we find h_theta (in K dimensions)
+   a1 = [1; X(i,:)']; % bias already added above
+   z2 = Theta1*a1;
+   a2 = [1; sigmoid(z2)]; % add bias
+   z3 = Theta2*a2; % no need to transpose here since a2 is already a colvec
+   a3 = sigmoid(z3);
+   h_Theta = a3;
+   % Then we compute the cost (using vectorization)
+   y_vec = (1:num_labels == y(i))'; % create logical array from y val
+   cost = -y_vec'*log(h_Theta) - (1 - y_vec')*log(1-h_Theta);
+   J = J+cost;
+   
+   % BACK PROP
+   d3 = a3 - y_vec;
+   d2 = (Theta2(:,2:end)'*d3).*sigmoidGradient(z2); % Add the bias to z2
+   
+   Delta2 = Delta2 + d3*a2';
+   Delta1 = Delta1 + d2*a1';
+end
 
+J = J/m;
 
+Theta1_grad = Delta1/m;
+Theta2_grad = Delta2/m;
 
+% Part 3 Regularize cost function
 
+temp_Theta1 = Theta1(:,2:end); % remove bias column
+temp_Theta2 = Theta2(:,2:end);
 
+temp_Theta1_vec = reshape(temp_Theta1, size(temp_Theta1, 1) * size(temp_Theta1, 2), 1); % convert to vector for summing
+temp_Theta2_vec = reshape(temp_Theta2, size(temp_Theta2, 1) * size(temp_Theta2, 2), 1);
 
+reg_cost = (lambda/(2*m))*(sum(temp_Theta1_vec.^2) + sum(temp_Theta2_vec.^2));
 
-
-
-
-
-
-
-
+J = J + reg_cost;
 
 % -------------------------------------------------------------
 
 % =========================================================================
 
+% Regularize gradient
+reg_grad_Theta1 = (lambda/m)*Theta1(:,2:end);
+reg_grad_Theta2 = (lambda/m)*Theta2(:,2:end);
+Theta1_grad = [Theta1_grad(:,1), Theta1_grad(:,2:end) + reg_grad_Theta1];
+Theta2_grad = [Theta2_grad(:,1), Theta2_grad(:,2:end) + reg_grad_Theta2];
+
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
-
 
 end
