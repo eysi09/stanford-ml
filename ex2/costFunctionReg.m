@@ -19,8 +19,20 @@ grad = zeros(size(theta));
 
 
 
+% For the first term we borrow the solution from costFunction.m
 
+h_theta = sigmoid(theta'*X')';
 
+err_term = (1/m)*sum(-y'*log(h_theta) - (1-y')*log(1-h_theta));
+reg_term = (lambda/(2*m))*sum(theta(2:end).^2);
+J = err_term + reg_term;
+
+% Grad for j = 0 (gives index 1 due to Octave indexing)
+grad(1) = (1/m)*sum((h_theta - y)'*X(:,1));
+
+for i = 2:size(theta)(1)
+ grad(i) = (1/m)*sum((h_theta - y)'*X(:,i)) + (lambda/m)*theta(i);
+end
 
 % =============================================================
 

@@ -15,11 +15,15 @@ p = zeros(m, 1);
 %               You should set p to a vector of 0's and 1's
 %
 
+% NON-VECTORIZED
 
+% for i = 1 : m
+%   p(i) = round(sigmoid(theta'*X(i,:)'));
+% end
 
+% VECTORIZED
 
-
-
+p = round(sigmoid(theta'*X')');
 
 % =========================================================================
 
