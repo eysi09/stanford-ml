@@ -36,14 +36,22 @@ grad = zeros(size(theta));
 %           grad = grad + YOUR_CODE_HERE (using the temp variable)
 %
 
+% NOTE FORM EYSI: This is the correct way to do the cost function.
 
+h_theta = sigmoid(X*theta);
+err_term = (1/m)*sum(-y.*log(h_theta) - (1 - y).*log(1 - h_theta));
+reg_term = (lambda/(2*m))*sum(theta(2:end).^2);
+J = err_term + reg_term;
 
+% Calc grad without reg term:
 
+grad = (1/m)*X'*(h_theta - y);
+temp = theta;
+temp(1) = 0;
 
+% Add reg term with theta(1) set to zero so it cancels out:
 
-
-
-
+grad = grad + (lambda/m).*temp;
 
 % =============================================================
 

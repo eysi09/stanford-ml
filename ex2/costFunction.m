@@ -29,6 +29,13 @@ for i = 1:3
   grad(i) = (1/m)*sum((h_theta - y)'*X(:,i));
 end
 
+% NOTE FROM EYSI: The above can (and probably should) be achived by the following:
+
+% h_theta = sigmoid(X*theta);
+% J = (1/m)*sum(-y.*log(h_theta) - (1 - y).*log(1 - h_theta));
+
+% grad = (1/m)*X'*(h_theta - y);
+
 % =============================================================
 
 end

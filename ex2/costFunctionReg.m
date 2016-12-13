@@ -34,6 +34,23 @@ for i = 2:size(theta)(1)
  grad(i) = (1/m)*sum((h_theta - y)'*X(:,i)) + (lambda/m)*theta(i);
 end
 
+% NOTE FROM EYSI: The above can (and probably should) be achived by the following:
+
+% h_theta = sigmoid(X*theta);
+% err_term = (1/m)*sum(-y.*log(h_theta) - (1 - y).*log(1 - h_theta));
+% reg_term = (lambda/(2*m))*sum(theta(2:end).^2);
+% J = err_term + reg_term;
+
+% Calc grad without reg term:
+
+% grad = (1/m)*X'*(h_theta - y);
+% temp = theta;
+% temp(1) = 0;
+
+% Add reg term with theta(1) set to zero so it cancels out:
+
+% grad = grad + (lambda/m).*temp;
+
 % =============================================================
 
 end

@@ -30,9 +30,9 @@ X = [ones(m, 1) X];
 %       for each row.
 %       
 
-
-
-
+% First return value is the max value, the second is the index
+% of the max value which in our case represents the predicted digit.
+[x, p] = max(sigmoid(X*all_theta'), [], 2);
 
 
 
