@@ -26,12 +26,11 @@ centroids = zeros(K, n);
 % Note: You can use a for-loop over the centroids to compute this.
 %
 
-
-
-
-
-
-
+for i = 1:K
+  idxs = find(idx == i); % Indexes of data points in cluster i
+  data_points = X(idxs, :);
+  centroids(i, :) = (1/size(data_points, 1))*sum(data_points);
+end
 
 % =============================================================
 

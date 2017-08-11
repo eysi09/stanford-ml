@@ -21,11 +21,17 @@ idx = zeros(size(X,1), 1);
 % Note: You can use a for-loop over the examples to compute this.
 %
 
+norms = zeros(K, 1);
 
-
-
-
-
+for i = 1:size(X, 1)
+  x = X(i, :);
+  for j = 1:K
+    c = centroids(j,:);
+    norms(j) = norm(x-c)^2;
+  end
+  [Min, index] = min(norms);
+  idx(i) = index;
+end
 
 % =============================================================
 
