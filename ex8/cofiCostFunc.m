@@ -40,20 +40,47 @@ Theta_grad = zeros(size(Theta));
 %                     partial derivatives w.r.t. to each element of Theta
 %
 
+% Note that we multiply R element wise to get rid of entries with no ratings
+% Same as summing over X*Theta' for only those i's and j's where R(i,j) = 1
+J = (1/2)*sum(sum(((X*Theta').*R - Y).^2));
 
+reg_term = 0.5*lambda*sum(sum(Theta.^2)) + 0.5*lambda*sum(sum(X.^2));
 
+J = J + reg_term;
 
+X_grad_test = zeros(num_movies, num_features);
+Theta_grad_test = zeros(num_users, num_features);
 
+for i = 1:num_movies
+  idx_m = find(R(i, :)==1);
+  Theta_temp = Theta(idx_m, :);
+  Y_temp = Y(i, idx_m);
+  reg_term = lambda*X(i,:);
+  X_grad(i, :) = (X(i, :)*Theta_temp' - Y_temp)*Theta_temp + reg_term;
+end
 
+% Naive summing (produces wrong results for the first row but correct
+% results for the remaining rows. Not really sure why.)
 
+% for i = 1:num_movies
+%   for j = 1:num_users
+%      if (R(i,j) != 0)
+%        for k = 1:num_features
+%          X_grad_test(i,k) = sum( (X(i,:)*Theta(j,:)' - Y(i,j))*Theta(j,k) );
+%       end
+%     end
+%   end
+% end
 
-
-
-
-
-
-
-
+for j = 1:num_users
+  idx_u = find(R(:,j)==1);
+  X_temp = X(idx_u, :);
+  Y_temp = Y(idx_u, j);
+  reg_term = lambda*Theta(j,:);
+  % Note that we need to transpose the term before the last X_temp
+  % for dims to match although that doesn't really conform to the formula.
+  Theta_grad(j, :) = (X_temp*Theta(j,:)' - Y_temp)'*X_temp + reg_term;
+end
 
 % =============================================================
 
